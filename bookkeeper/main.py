@@ -1,14 +1,10 @@
-from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton
 
 from bookkeeper.models.category import Category
-from bookkeeper.models.expense import Expense
-from bookkeeper.repository.memory_repository import MemoryRepository
 from bookkeeper.repository.sqlite_repository import SQLiteRepository
-from bookkeeper.utils import read_tree
 
 import sys
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt
+from PySide6 import QtCore, QtWidgets
 
 cat_repo = SQLiteRepository[Category]('test.db', Category)  # TODO: репозиторий sqlite пока не реализован
 
@@ -19,7 +15,7 @@ class TableModel(QtCore.QAbstractTableModel):
         self._data = data
 
     def data(self, index, role):
-        if role == Qt.DisplayRole:
+        if role == QtCore.Qt.DisplayRole:
             # See below for the nested-list data structure.
             # .row() indexes into the outer list,
             # .column() indexes into the sub-list
@@ -35,7 +31,8 @@ class TableModel(QtCore.QAbstractTableModel):
         return len(self._data[0])
 
 
-class MainWindow(QtWidgets.QMainWindow):
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -88,9 +85,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(self.widget)
 
-
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
     app.exec_()
