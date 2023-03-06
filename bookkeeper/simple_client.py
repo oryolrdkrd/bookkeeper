@@ -58,7 +58,7 @@ while True:
             break
         if not cmd:
             continue
-        Category.parent = cmd
+        Category.parent = int(cmd)
         cat_repo_sql.add(Category)
     # RO: получение всех категорий
     elif cmd == 'SQL_get_all':

@@ -28,20 +28,20 @@ class SQLiteRepository(AbstractRepository[T]):
         также записать id в атрибут pk.
         """
         names = ', '.join(self.fields.keys())
-        p = ', '.join("?" * len(self.fields))
-        req = ""+"insert into "+self.table_name+" ("+names+") values ("+p+")"""
+        subreq = ', '.join("?" * len(self.fields))
         values = [getattr(obj, x) for x in self.fields]
-        data = (getattr(obj, 'name', None), getattr(obj, 'parent', None))
             #RO: Получил данные из объекта для вставки
         try:
             with sqlite3.connect(self.db_file) as con:
                 cur = con.cursor()
-                cur.execute(req, values)
+                cur.execute('PRAGMA foreign_keys = ON')
+                cur.execute(f'INSERT INTO {self.table_name} ({names}) VALUES ({subreq})', values)
                 obj.pk = cur.lastrowid
+                return obj.pk
             con.close()
         except (sqlite3.Error, sqlite3.Warning) as err:
-                print("Ошибка:", err)
-        return obj.pk
+            print("Ошибка:", err)
+            return None
 
     def get(self, pk: int) -> T | None:
         pass
@@ -56,22 +56,13 @@ class SQLiteRepository(AbstractRepository[T]):
             try:
                 with sqlite3.connect(self.db_file) as con:
                     cur = con.cursor()
-                    cur.execute("""SELECT * FROM Category""")
-                print(cur.fetchall())
-                return list(cur.fetchall())
+                    cur.execute('SELECT * FROM Category')
+                    #print(cur.fetchall())
                 con.close()
+                return list(cur.fetchall())
             except (sqlite3.Error, sqlite3.Warning) as err:
                 print("Ошибка:", err)
-        try:
-            with sqlite3.connect(self.db_file) as con:
-                cur = con.cursor()
-                #req = "" + "SELECT * FROM " + self.table_name + "WHERE (" + where + "=" + where.+")"""
-                cur.execute("""SELECT * FROM Category WHERE """)
-            print(cur.fetchall())
-            return list(cur.fetchall())
-            con.close()
-        except (sqlite3.Error, sqlite3.Warning) as err:
-            print("Ошибка:", err)
+                return []
 
     def update(self, obj: T) -> None:
         if obj.pk == 0:
