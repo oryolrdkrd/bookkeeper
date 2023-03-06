@@ -56,7 +56,7 @@ class SQLiteRepository(AbstractRepository[T]):
             try:
                 with sqlite3.connect(self.db_file) as con:
                     cur = con.cursor()
-                    cur.execute('SELECT * FROM Category')
+                    cur.execute(f'SELECT * FROM {self.table_name}') # добавить блок WHERE
                     #print(cur.fetchall())
                 con.close()
                 return list(cur.fetchall())
