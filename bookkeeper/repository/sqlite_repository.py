@@ -12,7 +12,7 @@ class SQLiteRepository(AbstractRepository[T]):
     Репозиторий, работающий c БД SQLite
     """
 
-    def __init__(self, db_file: str, cls: type) -> None:
+    def __init__(self, db_file: str, cls: type) -> None: # TODO: создание таблиц, если они не существуют
         self.db_file = db_file
         self.table_name = cls.__name__.lower()
         self.fields = get_annotations(cls, eval_str=True)
