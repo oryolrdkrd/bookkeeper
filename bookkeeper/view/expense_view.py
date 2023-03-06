@@ -59,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottom_controls.addWidget(self.category_edit_button, 1, 2)
 
         self.expense_add_button = QPushButton('Добавить')
-        self.bottom_controls.addWidget(self.expense_add_button, 2, 1
+        self.bottom_controls.addWidget(self.expense_add_button, 2, 1)
 
         self.bottom_widget = QWidget()
         self.bottom_widget.setLayout(self.bottom_controls)
@@ -71,20 +71,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(self.widget)
 
-        def set_expense_table(self, data):
-            self.item_model = TableModel(data)
-            self.expenses_grid.setModel(self.item_model)
+    def set_expense_table(self, data):
+        self.item_model = TableModel(data)
+        self.expenses_grid.setModel(self.item_model)
 
-            def set_category_dropdown(self, data):
-                for tup in data:
-                    self.category_dropdown.addItem(tup[1], tup[0])
+    def set_category_dropdown(self, data):
+        for tup in data:
+            self.category_dropdown.addItem(tup[1], tup[0])
 
-        def on_expense_add_button_clicked(self, slot):
-            self.expense_add_button.clicked.connect(slot)
+    def on_expense_add_button_clicked(self, slot):
+        self.expense_add_button.clicked.connect(slot)
 
-        def get_amount(self) -> float:
-            return float(self.amount_line_edit.text())  # TODO: обработка исключений
+    def get_amount(self) -> float:
+        return float(self.amount_line_edit.text())  # TODO: обработка исключений
 
 
-        def get_selected_cat(self) -> int:
-            return self.category_dropdown.itemData(self.category_dropdown.currentIndex())
+    def get_selected_cat(self) -> int:
+        return self.category_dropdown.itemData(self.category_dropdown.currentIndex())
