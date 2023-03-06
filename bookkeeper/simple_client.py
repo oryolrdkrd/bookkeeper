@@ -11,7 +11,7 @@ from bookkeeper.utils import read_tree
 cat_repo = MemoryRepository[Category]()
 exp_repo = MemoryRepository[Expense]()
 
-cat_repo_sql = SQLiteRepository[Category]("./repository/test.db", Category)
+cat_repo_sql = SQLiteRepository[Category]("./db/test.db", Category)
 
 cats = '''
 продукты
