@@ -18,8 +18,9 @@ class SQLiteRepository(AbstractRepository[T]):
             db_tables = [t[0].lower() for t in res.fetchall()]
             if self.table_name not in db_tables:
                 col_names = ', '.join(self.fields.keys())
-                q = f'INSERT INTO {self.table_name} ({names}) VALUES ({p})'
-                cur.execute(q, values)
+                q = f'CREATE TABLE {self.table_name} (' \
+                    f'"pk" INTEGER PRIMARY KEY AUTOINCREMENT, {col_names})'
+                cur.execute(q)
         con.close()
     
     def add(self, obj: T) -> int:
