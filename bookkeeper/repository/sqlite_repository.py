@@ -9,6 +9,7 @@ class SQLiteRepository(AbstractRepository[T]):
     def __init__(self, db_file: str, cls: type) -> None:
         self.db_file = db_file
         self.table_name = cls.__name__.lower()
+        self.cls = cls
         self.fields = get_annotations(cls, eval_str=True)
         self.fields.pop('pk')
         with sqlite3.connect(self.db_file) as con:
@@ -17,9 +18,8 @@ class SQLiteRepository(AbstractRepository[T]):
             db_tables = [t[0].lower() for t in res.fetchall()]
             if self.table_name not in db_tables:
                 col_names = ', '.join(self.fields.keys())
-                q = f'CREATE TABLE {self.table_name} (' \
-                    f'"pk" INTEGER PRIMARY KEY AUTOINCREMENT, {col_names})'
-                cur.execute(q)
+                q = f'INSERT INTO {self.table_name} ({names}) VALUES ({p})'
+                cur.execute(q, values)
         con.close()
     
     def add(self, obj: T) -> int:
@@ -39,7 +39,20 @@ class SQLiteRepository(AbstractRepository[T]):
 
     def get(self, pk: int) -> T | None:
         """ Получить объект по id """
-        pass
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            q = f'SELECT * FROM {self.table_name} WHERE pk = {pk}'
+            row = cur.execute(q).fetchone()
+        con.close()
+
+        if row is None:
+            return None
+
+        obj = self.cls()
+        for field, value in zip(self.fields, row[1:]):
+            setattr(obj, field, value)
+        obj.pk = pk
+        return obj
 
     def get_all(self, where: dict[str, Any] | None = None) -> list[T]:
         """
