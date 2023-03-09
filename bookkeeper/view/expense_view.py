@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.item_model = None
         self.setWindowTitle("Программа для ведения бюджета")
-        self.setFixedSize(500, 600)
+        self.setFixedSize(800, 600)
 
         self.layout = QVBoxLayout()
 
