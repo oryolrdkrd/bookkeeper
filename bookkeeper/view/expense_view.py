@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton
 from PySide6 import QtCore, QtWidgets
+from bookkeeper.view.categories_view import CategoryDialog
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -12,7 +13,8 @@ class TableModel(QtCore.QAbstractTableModel):
             # See below for the nested-list data structure.
             # .row() indexes into the outer list,
             # .column() indexes into the sub-list
-            return self._data[index.row()][index.column()]
+            fields = list(self._data[index.row()].__dataclass_fields__.keys())
+            return self._data[index.row()].__getattribute__(fields[index.column()])
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -21,7 +23,7 @@ class TableModel(QtCore.QAbstractTableModel):
     def columnCount(self, index):
         # The following takes the first sub-list, and returns
         # the length (only works if all rows are an equal length)
-        return len(self._data[0])
+        return len(self._data[0].__dataclass_fields__)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -31,7 +33,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #Основные параметры окна
         self.item_model = None
         self.setWindowTitle("Программа для ведения бюджета")
-        self.setFixedSize(800, 600)
 
         #Делаем вертикальный Layout
         self.layout = QVBoxLayout()
@@ -59,6 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.category_edit_button = QPushButton('Редактировать')
         self.bottom_controls.addWidget(self.category_edit_button, 1, 2)
+        self.category_edit_button.clicked.connect(self.show_cats_dialog)
 
         self.expense_add_button = QPushButton('Добавить')
         self.bottom_controls.addWidget(self.expense_add_button, 2, 1)
@@ -74,12 +76,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.widget)
 
     def set_expense_table(self, data):
-        self.item_model = TableModel(data)
-        self.expenses_grid.setModel(self.item_model)
+        if data:
+            self.item_model = TableModel(data)
+            self.expenses_grid.setModel(self.item_model)
+            self.expenses_grid.resizeColumnsToContents()
+            grid_width = sum([self.expenses_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
+            self.setFixedSize(grid_width + 80, 600)
 
     def set_category_dropdown(self, data):
-        for tup in data:
-            self.category_dropdown.addItem(tup[1], tup[0])
+        for c in data:
+            self.category_dropdown.addItem(c.name, c.pk)
 
     def on_expense_add_button_clicked(self, slot):
         self.expense_add_button.clicked.connect(slot)
@@ -90,3 +96,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_selected_cat(self) -> int:
         return self.category_dropdown.itemData(self.category_dropdown.currentIndex())
+
+    def on_category_edit_button_clicked(self, slot):
+        self.category_edit_button.clicked.connect(slot)
+
+    def show_cats_dialog(self, data):
+        if data:
+            cat_dlg = CategoryDialog(data)
+            cat_dlg.setWindowTitle('Редактирование категорий')
+            cat_dlg.setGeometry(300, 100, 600, 300)
+            cat_dlg.exec_()
