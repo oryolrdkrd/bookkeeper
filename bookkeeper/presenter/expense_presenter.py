@@ -1,3 +1,5 @@
+import datetime
+
 from bookkeeper.models.expense import Expense
 
 class ExpensePresenter:
@@ -30,7 +32,8 @@ class ExpensePresenter:
         cat_pk = self.view.get_selected_cat()
         amount = self.view.get_amount()
         expense_date = self.view.get_date_exp()
-        exp = Expense(int(amount), cat_pk, expense_date)
+        added_date = datetime.datetime.now()
+        exp = Expense(int(amount), cat_pk, expense_date, added_date.strftime("%y-%m-%d"))
         self.exp_repo.add(exp)
         self.update_expense_data()
 
