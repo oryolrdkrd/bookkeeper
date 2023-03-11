@@ -28,10 +28,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        #Основные параметры окна
         self.item_model = None
         self.setWindowTitle("Программа для ведения бюджета")
         self.setFixedSize(800, 600)
 
+        #Делаем вертикальный Layout
         self.layout = QVBoxLayout()
 
         self.layout.addWidget(QLabel('Последние расходы'))

@@ -10,6 +10,7 @@ from bookkeeper.utils import read_tree
 
 import sys
 from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtWidgets import QPushButton, QVBoxLayout, QLabel, QLineEdit, QWidget
 from PySide6.QtCore import Qt
 
 cat_repo = SQLiteRepository[Category]('./db/test.db', Category)  # TODO: репозиторий sqlite пока не реализован
@@ -41,14 +42,37 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle("My App")
+
+        self.label = QLabel()
+
+        self.input = QLineEdit()
+        self.input.textChanged.connect(self.label.setText)
+
+        #Добавление тестовой кнопки
+        self.test_button = QPushButton('Тест')
+        self.test_button.clicked.connect(self.show_grid)
+
+        #Формирование таблицы с данными
         self.table = QtWidgets.QTableView()
-
         data = cat_repo.get_all()
-
         self.model = TableModel(data)
         self.table.setModel(self.model)
 
-        self.setCentralWidget(self.table)
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.input)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.test_button)
+
+
+        self.container = QWidget()
+        self.container.setLayout(self.layout)
+
+        self.setCentralWidget(self.container)
+
+    def show_grid(self):
+        self.layout.addWidget(self.table)
+
 
 
 app = QtWidgets.QApplication(sys.argv)
