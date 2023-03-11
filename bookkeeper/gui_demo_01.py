@@ -54,6 +54,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.test_button = QPushButton('Тест')
         self.test_button.clicked.connect(self.show_grid)
 
+        #Добавление текстового поля ввода даты
+        self.dateEdit = QtWidgets.QDateEdit()
+        self.dateEdit.setGeometry(QtCore.QRect(10, 10, 110, 22))
+        self.dateEdit.setCalendarPopup(True)
+        self.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.dateEdit.setObjectName("dateEdit")
+
         #Формирование таблицы с данными
         self.table = QtWidgets.QTableView()
         data = cat_repo.get_all()
@@ -64,6 +71,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout.addWidget(self.input)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.test_button)
+        self.layout.addWidget(self.dateEdit)
 
 
         self.container = QWidget()

@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets, QtGui
 from bookkeeper.view.categories_view import CategoryDialog
 
 
@@ -55,8 +55,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Добавляю поле ввода даты, на которую отнесен расход
         self.bottom_controls.addWidget(QLabel('Дата расхода'), 0, 0)
-        self.dateexp_line_edit = QLineEdit()
-        self.bottom_controls.addWidget(self.dateexp_line_edit, 0, 1)  # TODO: добавить валидатор
+        self.dateexp_line_edit = QtWidgets.QDateEdit()
+        self.dateexp_line_edit.setCalendarPopup(True)
+        self.dateexp_line_edit.setDisplayFormat("yyyy-MM-dd")
+        self.dateexp_line_edit.setDate(QtCore.QDate.currentDate())
+        self.bottom_controls.addWidget(self.dateexp_line_edit, 0, 1)
 
         self.bottom_controls.addWidget(QLabel('Сумма'), 1, 0)
         self.amount_line_edit = QLineEdit()
