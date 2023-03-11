@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton
+from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QPlainTextEdit
 from PySide6 import QtCore, QtWidgets, QtGui
 from bookkeeper.view.categories_view import CategoryDialog
 
@@ -39,6 +39,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #Основные параметры окна
         self.item_model = None
         self.setWindowTitle("Программа для ведения бюджета")
+        self.setGeometry(600, 100, 600, 300)
 
         #Делаем вертикальный Layout
         self.layout = QVBoxLayout()
@@ -74,6 +75,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottom_controls.addWidget(self.category_edit_button, 2, 2)
         self.category_edit_button.clicked.connect(self.show_cats_dialog)
 
+        #Добавляем комментарий
+        self.comment_edit = QPlainTextEdit()
+        self.comment_edit.setGeometry(30, 30, 30, 30)
+        self.bottom_controls.addWidget(QLabel('Комментарий'), 3, 0)
+        self.bottom_controls.addWidget(self.comment_edit, 3, 1)
+
         self.expense_add_button = QPushButton('Добавить')
         self.bottom_controls.addWidget(self.expense_add_button, 4, 1)
 
@@ -108,6 +115,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def get_date_exp(self) -> str:
         return self.dateexp_line_edit.text()  # TODO: Обработка исключений
 
+    def get_comment(self) -> str:
+        return self.comment_edit.toPlainText()
 
     def get_selected_cat(self) -> int:
         return self.category_dropdown.itemData(self.category_dropdown.currentIndex())

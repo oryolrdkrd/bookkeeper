@@ -33,7 +33,8 @@ class ExpensePresenter:
         amount = self.view.get_amount()
         expense_date = self.view.get_date_exp()
         added_date = datetime.datetime.now()
-        exp = Expense(int(amount), cat_pk, expense_date, added_date.strftime("%y-%m-%d"))
+        comment = self.view.get_comment()
+        exp = Expense(int(amount), cat_pk, expense_date, added_date.strftime("%y-%m-%d"), comment)
         self.exp_repo.add(exp)
         self.update_expense_data()
 
