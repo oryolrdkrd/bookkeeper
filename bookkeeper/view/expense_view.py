@@ -53,23 +53,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.bottom_controls = QGridLayout()
 
-        self.bottom_controls.addWidget(QLabel('Сумма'), 0, 0)
+        # Добавляю поле ввода даты, на которую отнесен расход
+        self.bottom_controls.addWidget(QLabel('Дата расхода'), 0, 0)
+        self.dateexp_line_edit = QLineEdit()
+        self.bottom_controls.addWidget(self.dateexp_line_edit, 0, 1)  # TODO: добавить валидатор
 
+        self.bottom_controls.addWidget(QLabel('Сумма'), 1, 0)
         self.amount_line_edit = QLineEdit()
+        self.bottom_controls.addWidget(self.amount_line_edit, 1, 1)  # TODO: добавить валидатор
 
-        self.bottom_controls.addWidget(self.amount_line_edit, 0, 1)  # TODO: добавить валидатор
-        self.bottom_controls.addWidget(QLabel('Категория'), 1, 0)
-
+        self.bottom_controls.addWidget(QLabel('Категория'), 2, 0)
         self.category_dropdown = QComboBox()
 
-        self.bottom_controls.addWidget(self.category_dropdown, 1, 1)
+        self.bottom_controls.addWidget(self.category_dropdown, 2, 1)
 
         self.category_edit_button = QPushButton('Редактировать')
-        self.bottom_controls.addWidget(self.category_edit_button, 1, 2)
+        self.bottom_controls.addWidget(self.category_edit_button, 2, 2)
         self.category_edit_button.clicked.connect(self.show_cats_dialog)
 
         self.expense_add_button = QPushButton('Добавить')
-        self.bottom_controls.addWidget(self.expense_add_button, 2, 1)
+        self.bottom_controls.addWidget(self.expense_add_button, 4, 1)
 
         self.bottom_widget = QWidget()
         self.bottom_widget.setLayout(self.bottom_controls)
@@ -98,6 +101,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_amount(self) -> float:
         return float(self.amount_line_edit.text())  # TODO: обработка исключений
+
+    def get_date_exp(self) -> str:
+        return self.dateexp_line_edit.text()  # TODO: Обработка исключений
 
 
     def get_selected_cat(self) -> int:
