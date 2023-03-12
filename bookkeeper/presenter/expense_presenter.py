@@ -9,6 +9,7 @@ class ExpensePresenter:
         self.view = view
         self.exp_repo = exp_repo
         self.exp_data = None
+        self.header_nums = {}   #Словарь Заголовок таблицы расходов - его индекс
         self.cat_data = cat_repo.get_all()  # TODO: implement update_cat_data() similar to update_expense_data()
         self.view.on_expense_add_button_clicked(self.handle_expense_add_button_clicked)
         self.view.on_category_edit_button_clicked(self.handle_category_edit_button_clicked)
@@ -47,3 +48,4 @@ class ExpensePresenter:
 
     def handle_category_edit_button_clicked(self):
         self.view.show_cats_dialog(self.cat_data)
+

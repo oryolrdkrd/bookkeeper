@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QPlainTextEdit
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSize
 from PySide6.QtGui import *
 from bookkeeper.view.categories_view import CategoryDialog
 
@@ -41,7 +41,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #Основные параметры окна
         self.item_model = None
         self.setWindowTitle("Программа для ведения бюджета")
-        self.setGeometry(600, 100, 600, 300)
 
         #Делаем вертикальный Layout
         self.layout = QVBoxLayout()
