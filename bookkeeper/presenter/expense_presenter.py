@@ -12,7 +12,14 @@ class ExpensePresenter:
         self.cat_data = cat_repo.get_all()  # TODO: implement update_cat_data() similar to update_expense_data()
         self.view.on_expense_add_button_clicked(self.handle_expense_add_button_clicked)
         self.view.on_category_edit_button_clicked(self.handle_category_edit_button_clicked)
+        self.view.expenses_grid.customContextMenuRequested.connect(
+            lambda pos, table=self.view.expenses_grid: self.view.context(pos, table,
+                lambda: self.delete_row_exp()))
 
+    def delete_row_exp(self) -> None:
+        row = self.view.expenses_grid.currentIndex().row()
+        self.exp_repo.delete( self.view.expenses_grid.model().index(row, 5).data()) #TODO Забирать индекс столбца с pk автоматом
+        self.update_expense_data()
 
     def update_expense_data(self):
         self.exp_data = self.exp_repo.get_all()

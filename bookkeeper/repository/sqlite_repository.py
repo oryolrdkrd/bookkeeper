@@ -78,5 +78,9 @@ class SQLiteRepository(AbstractRepository[T]):
         pass
 
     def delete(self, pk: int) -> None:
-        """ Удалить запись """        
+        """ Удалить запись """
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            cur.execute(f'DELETE FROM {self.table_name} WHERE pk={pk}')
+        con.close()
         pass

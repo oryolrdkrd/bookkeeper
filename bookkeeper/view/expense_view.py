@@ -1,5 +1,7 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QPlainTextEdit
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtGui import *
 from bookkeeper.view.categories_view import CategoryDialog
 
 
@@ -48,6 +50,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.expenses_grid = QtWidgets.QTableView()
         self.layout.addWidget(self.expenses_grid)
+
+        #Создадим контекстное меню для таблицы расходов
+        self.expenses_grid.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        #self.expenses_grid.customContextMenuRequested.connect(lambda pos, table=self.expenses_grid: self.context(pos, table))
 
         self.layout.addWidget(QLabel('Бюджет'))
         self.layout.addWidget(QLabel('<TODO: таблица бюджета>\n\n\n\n\n\n\n\n'))
@@ -130,3 +136,11 @@ class MainWindow(QtWidgets.QMainWindow):
             cat_dlg.setWindowTitle('Редактирование категорий')
             cat_dlg.setGeometry(300, 100, 600, 300)
             cat_dlg.exec_()
+
+    def context(self, point, table, slot):
+    #Контекстное меню на таблицу расходов
+        menu = QtWidgets.QMenu()
+        deleteAction = QAction('Удалить расход', menu)
+        deleteAction.triggered.connect(slot)
+        menu.addAction(deleteAction)
+        menu.exec(table.mapToGlobal(point))
