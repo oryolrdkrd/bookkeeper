@@ -40,11 +40,23 @@ class ExpensePresenter:
         #self.budget_data = self.budget_repo.get_all()
         budget_data = self.budget_repo.get_all({'find_obj':'*','month':str(int(self.view.get_date_bug()[5:7])), 'AND':'', 'year':self.view.get_date_bug()[0:4]})
         #budget_data = self.budget_repo.get_all({'find_obj': '*', 'year': self.view.get_date_bug()[0:4]})
-        a = self.exp_repo.get_all()
+        a = self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':self.view.get_date_bug()})[0].pk
         print(f'a = {a}')
-        #b = Budget(amount_day_limit=None,
-        #           amount_week_limit='7000', amount_month_limit='28000', month=None, pk=1)
-        #self.budget_data.append(b)
+        b = Budget(amount_day_limit=self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':self.view.get_date_bug()})[0].pk,
+                   amount_week_limit='7000', amount_month_limit='28000', month=None, pk=1)
+        #TODO Добавить данные недельного и месячного расходов
+        """
+        SELECT 
+        sum(case when expense_date = '2023-03-12' then  amount end ) as SUM_DAY
+        ,sum(case when expense_date between  date('2023-03-10', 'weekday 0','1 days') and date('2023-03-10', 'weekday 6','1 days') then  amount end ) as SUM_week
+        ,sum(case when expense_date between  date('2023-03-12', 'start of month') and date('2023-04-12', 'start of month', '-1 days')  then  amount end ) as SUM_month
+
+        FROM EXPENSE;
+ 
+        SELECT date('2023-03-12', 'weekday 0','1 days'),date('2023-03-10', 'weekday 6','1 days');
+        """
+
+        budget_data.append(b)
         print(budget_data)
         self.view.set_budget_table(budget_data)
 

@@ -123,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.expenses_grid.setModel(self.item_model)
             self.expenses_grid.resizeColumnsToContents()
             grid_width = sum([self.expenses_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
-            self.setFixedSize(grid_width + 80, 600)
+            self.setFixedSize(grid_width + 40, 600)
 
     def set_budget_table(self, data):
         if data:
@@ -131,7 +131,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.budget_grid.setModel(self.item_model)
             self.budget_grid.resizeColumnsToContents()
             grid_width = sum([self.budget_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
-            self.setFixedSize(grid_width + 80, 600)
+            self.setFixedSize(grid_width + 40, 600)
             print('!')
         else:
             self.item_model = TableModel([Budget(amount_day_limit=None, amount_week_limit=None, amount_month_limit=None, month=None,
