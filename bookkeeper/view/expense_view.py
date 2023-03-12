@@ -68,6 +68,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.datebug_line_edit.setDisplayFormat("yyyy-MM-dd")
         self.datebug_line_edit.setDate(QtCore.QDate.currentDate())
         self.layout.addWidget(self.datebug_line_edit)
+        #кнопка бюджета
+        self.buget_add_button = QPushButton('Добавить бюджет')      #TODO добавить обработчик на окно ввода бюджета
+        self.layout.addWidget(self.buget_add_button)
 
         self.budget_grid = QtWidgets.QTableView()
         self.layout.addWidget(self.budget_grid)
