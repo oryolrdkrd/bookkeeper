@@ -3,6 +3,7 @@ from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import QSize
 from PySide6.QtGui import *
 from bookkeeper.view.categories_view import CategoryDialog
+from bookkeeper.models.budget import Budget
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -33,6 +34,9 @@ class TableModel(QtCore.QAbstractTableModel):
         # the length (only works if all rows are an equal length)
         return len(self._data[0].__dataclass_fields__)
 
+    def addData(self, adddata):
+        self._data.append(adddata)
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -54,8 +58,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.expenses_grid.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         #self.expenses_grid.customContextMenuRequested.connect(lambda pos, table=self.expenses_grid: self.context(pos, table))
 
+        #Делаю слой для элементов бюджета
+        self.budget_controls = QGridLayout()
+        #Создаю таблицу вывода бюджета
         self.layout.addWidget(QLabel('Бюджет'))
-        self.layout.addWidget(QLabel('<TODO: таблица бюджета>\n\n\n\n\n\n\n\n'))
+        self.layout.addWidget(QLabel('Дата бюджета:'))
+        self.datebug_line_edit = QtWidgets.QDateEdit()
+        self.datebug_line_edit.setCalendarPopup(True)
+        self.datebug_line_edit.setDisplayFormat("yyyy-MM-dd")
+        self.datebug_line_edit.setDate(QtCore.QDate.currentDate())
+        self.layout.addWidget(self.datebug_line_edit)
+
+        self.budget_grid = QtWidgets.QTableView()
+        self.layout.addWidget(self.budget_grid)
 
         self.bottom_controls = QGridLayout()
 
@@ -107,6 +122,24 @@ class MainWindow(QtWidgets.QMainWindow):
             grid_width = sum([self.expenses_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
             self.setFixedSize(grid_width + 80, 600)
 
+    def set_budget_table(self, data):
+        if data:
+            self.item_model = TableModel(data)
+            self.budget_grid.setModel(self.item_model)
+            self.budget_grid.resizeColumnsToContents()
+            grid_width = sum([self.budget_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
+            self.setFixedSize(grid_width + 80, 600)
+            print('!')
+        else:
+            self.item_model = TableModel([Budget(amount_day_limit=None, amount_week_limit=None, amount_month_limit=None, month=None,
+                    year=None, pk=None)])
+            self.budget_grid.setModel(self.item_model)
+            self.budget_grid.resizeColumnsToContents()
+            grid_width = sum([self.budget_grid.columnWidth(x) for x in range(0, self.item_model.columnCount(0) + 1)])
+            self.setFixedSize(grid_width + 80, 600)
+            print('+')
+
+
     def set_category_dropdown(self, data):
         for c in data:
             self.category_dropdown.addItem(c.name, c.pk)
@@ -114,11 +147,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_expense_add_button_clicked(self, slot):
         self.expense_add_button.clicked.connect(slot)
 
+    def on_date_datebug_changed(self, slot):
+        self.datebug_line_edit.dateChanged.connect(slot)
+
     def get_amount(self) -> float:
-        return float(self.amount_line_edit.text())  # TODO: обработка исключений
+        return float(self.amount_line_edit.text())
 
     def get_date_exp(self) -> str:
-        return self.dateexp_line_edit.text()  # TODO: Обработка исключений
+        return self.dateexp_line_edit.text()
+
+    def get_date_bug(self) -> str:
+        return self.datebug_line_edit.text()
 
     def get_comment(self) -> str:
         return self.comment_edit.toPlainText()

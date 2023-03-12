@@ -19,6 +19,6 @@ class Budget:
     amount_day_limit: float = 0.0
     amount_week_limit: float = 0.0
     amount_month_limit: float = 0.0
-    category: str | int = 0
     month: str = ''
+    year: str = ''
     pk: int = 0

@@ -64,14 +64,32 @@ class SQLiteRepository(AbstractRepository[T]):
         """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name}')  # TODO: добавить блок WHERE
+            self.sub_req=''
+            if where:
+                self.sub_req = self.get_where(where)
+                cur.execute(f'SELECT {where["find_obj"]} FROM {self.table_name} {self.sub_req}')
+                print(f'SELECT {where["find_obj"]} FROM {self.table_name} {self.sub_req}')
+            else:
+                cur.execute(f'SELECT * FROM {self.table_name} {where}')
             rows = cur.fetchall()
-        con.close()
+        #con.close()
 
         if not rows:
             return None
-
+        con.close()
+        print(self.__generate_object(row) for row in rows)
         return [self.__generate_object(row) for row in rows]
+
+    def get_where(self, where: dict[str, Any] | None = None) -> str:
+        req = 'WHERE '
+        for i in where:
+            if i != 'find_obj' and i != 'AND' and i != 'OR':
+                req+=i+"='"+where[i]+"' "
+            elif i == 'find_obj':
+                pass
+            elif i == 'AND' or i == 'OR':
+                req += i + ' '
+        return req
 
     def update(self, obj: T) -> None:
         """ Обновить данные об объекте. Объект должен содержать поле pk. """
