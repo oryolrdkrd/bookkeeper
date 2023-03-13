@@ -3,6 +3,7 @@
 """
 
 from typing import Iterable, Iterator
+import datetime
 
 
 def _get_indent(line: str) -> int:
@@ -61,3 +62,13 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
         last_name = name
         last_indent = indent
     return result
+
+def get_start_end_week(date:str) -> list[str]:
+    """Функция получения начальной и конечной даты недели
+    по передаваемой дате"""
+    d = date.split('-')
+    date_date = datetime.datetime.strptime(date,'%Y-%m-%d')
+    sdt = datetime.datetime.fromisocalendar(int(d[0]), date_date.isocalendar()[1], 1)
+    edt = datetime.datetime.fromisocalendar(int(d[0]), date_date.isocalendar()[1], 7)
+    print(f"{datetime.datetime.strftime(sdt,'%Y-%m-%d')},{datetime.datetime.strftime(edt,'%Y-%m-%d')}")
+    return [datetime.datetime.strftime(sdt,'%Y-%m-%d'),datetime.datetime.strftime(edt,'%Y-%m-%d')]
