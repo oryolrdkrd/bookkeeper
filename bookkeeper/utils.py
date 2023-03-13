@@ -70,5 +70,13 @@ def get_start_end_week(date:str) -> list[str]:
     date_date = datetime.datetime.strptime(date,'%Y-%m-%d')
     sdt = datetime.datetime.fromisocalendar(int(d[0]), date_date.isocalendar()[1], 1)
     edt = datetime.datetime.fromisocalendar(int(d[0]), date_date.isocalendar()[1], 7)
-    print(f"{datetime.datetime.strftime(sdt,'%Y-%m-%d')},{datetime.datetime.strftime(edt,'%Y-%m-%d')}")
-    return [datetime.datetime.strftime(sdt,'%Y-%m-%d'),datetime.datetime.strftime(edt,'%Y-%m-%d')]
+    if int(edt.strftime("%m"))+1 == 13:
+        nmonth = '01'
+    else:
+        if len(str(int(edt.strftime("%m"))+1)) == 1:
+            nmonth = '0' + str(int(edt.strftime("%m")) + 1)
+        else:
+            nmonth = str(int(edt.strftime("%m"))+1)
+    d[1] = nmonth
+    print(f"месяц {d[0]+'-'+d[1]+'-'+d[2]}")
+    return [datetime.datetime.strftime(sdt,'%Y-%m-%d'), datetime.datetime.strftime(edt,'%Y-%m-%d'),d[0]+'-'+d[1]+'-'+d[2]]

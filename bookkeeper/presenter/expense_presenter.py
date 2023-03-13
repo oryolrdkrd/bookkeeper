@@ -1,5 +1,5 @@
 import datetime
-
+import sys
 from bookkeeper.models.expense import Expense
 from bookkeeper.models.budget import Budget
 from bookkeeper.utils import get_start_end_week
@@ -39,15 +39,30 @@ class ExpensePresenter:
 
     def update_budget_data(self):
         #self.budget_data = self.budget_repo.get_all()
-        budget_data = self.budget_repo.get_all({'find_obj':'*','month':str(int(self.view.get_date_bug()[5:7])), 'AND':'', 'year':self.view.get_date_bug()[0:4]})
-        #budget_data = self.budget_repo.get_all({'find_obj': '*', 'year': self.view.get_date_bug()[0:4]})
-        a = self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':self.view.get_date_bug()})[0].pk
-        get_start_end_week(self.view.get_date_bug())
-        b = Budget(amount_day_limit=self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':self.view.get_date_bug()})[0].pk,
-                   amount_week_limit='7000', amount_month_limit='28000', month=None, pk=1)
-        #TODO Добавить данные недельного и месячного расходов
-
-        budget_data.append(b)
+        budget_data = Budget(amount_day_limit='', amount_week_limit='', amount_month_limit='', month=None, pk=1)
+        try:
+            budget_data = self.budget_repo.get_all({'find_obj':'*','month':str(int(self.view.get_date_bug()[5:7])), 'AND':'', 'year':self.view.get_date_bug()[0:4]})
+            #budget_data = self.budget_repo.get_all({'find_obj': '*', 'year': self.view.get_date_bug()[0:4]})
+            dweek = get_start_end_week(self.view.get_date_bug()) #Получаю даты недели
+            a = self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':'', 'between':'',
+                                   "date('" + dweek[0] + "', 'start of month')":'', 'AND':'',
+                                   "date('" + dweek[2] + "', 'start of month', '-1 days')":''})[0].pk
+        except:
+            print('Ошибка в лимитах')
+        #print(a)
+        try:
+            b = Budget(amount_day_limit=self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':self.view.get_date_bug()})[0].pk,
+                amount_week_limit=self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':'', 'between':'',
+                                   "'" + dweek[0] + "'":'', 'AND':'', "'" + dweek[1] + "'":''})[0].pk,
+                amount_month_limit=self.exp_repo.get_all({'find_obj':'sum(amount)','expense_date':'', 'between':'',
+                                   "date('" + dweek[0] + "', 'start of month')":'', 'AND':'',
+                                   "date('" + dweek[2] + "', 'start of month', '-1 days')":''})[0].pk,
+                month=None, pk=1)
+            #TODO Добавить данные недельного и месячного расходов
+            budget_data.append(b)
+        except Exception:
+            e = sys.exc_info()[1]
+            print(e.args[0])
         print(budget_data)
         self.view.set_budget_table(budget_data)
 
@@ -66,6 +81,7 @@ class ExpensePresenter:
         exp = Expense(int(amount), cat_pk, expense_date, added_date.strftime("%y-%m-%d"), comment)
         self.exp_repo.add(exp)
         self.update_expense_data()
+        self.update_budget_data()
 
     def handle_budget_add_button_clicked(self) -> None:
         self.update_budget_data()

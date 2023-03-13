@@ -75,7 +75,7 @@ class SQLiteRepository(AbstractRepository[T]):
         #con.close()
 
         if not rows:
-            return None
+            return [self.__generate_object([None])]
         con.close()
         print(self.__generate_object(row) for row in rows)
         return [self.__generate_object(row) for row in rows]
@@ -84,7 +84,10 @@ class SQLiteRepository(AbstractRepository[T]):
         req = 'WHERE '
         for i in where:
             if i != 'find_obj' and i != 'AND' and i != 'OR':
-                req+=i+"='"+where[i]+"' "
+                if where[i] != '':
+                    req += i + "='" + where[i] + "' "
+                else:
+                    req += i + " "
             elif i == 'find_obj':
                 pass
             elif i == 'AND' or i == 'OR':
